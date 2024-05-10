@@ -1,4 +1,4 @@
-import pygame
+import 
 
 pygame.init()
 dis = pygame.display.set_mode((1000, 700))
