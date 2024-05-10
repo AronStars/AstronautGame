@@ -1,4 +1,6 @@
-import 
+import pygame
+
+# FINAL BOSS MUST BE WARING
 
 pygame.init()
 dis = pygame.display.set_mode((1000, 700))
@@ -18,44 +20,25 @@ orientation = "astroright"
 global counter
 counter = 0
 
-
 def createImage(image, size):
     imp = pygame.image.load(image)
     imp = pygame.transform.scale(imp, size)
     return imp
 
-def displayImage(astro, loc, counter, orientation):
-    if counter % 2 == 0:
-        counter += 1
-        print(counter)
-        return dis.blit(orientation, loc)
-    else:
-        counter += 1
-        if astro == "astroleft":
-            print("walkright")
-            orientation = "astrowalkleft"
-            return dis.blit(orientation, loc)
-        else:
-            print("walkleft")
-            orientation = "astrowalkright"
-            return dis.blit(orientation, loc)
-        
-
 def displayMessage(msg, loc, colour=(0, 0, 0)):
     dis.blit(comicSans.render(msg, True, colour), loc)
 
-inviswall = pygame.Rect(0, 700, 1000, 1)  # Update the dimensions of the invisible wall
-
 pos = [500, 350]
-clock = pygame.time.Clock()
-astronaut = createImage(orientation + ".png", [500, 500])
-astronaut.get_rect(center=(500, 350))
+velocity = [0, 0]
+acceleration = 0.2  
+friction = 0.1  
+max_speed = 5  
 
+clock = pygame.time.Clock()
 
 game_over = False
 target = False
 
-# Variables to track key states
 move_up = False
 move_down = False
 move_left = False
@@ -64,7 +47,6 @@ move_right = False
 while not game_over:
     dis.fill(black)
     x_mouse, y_mouse = pygame.mouse.get_pos()
-    displayImage(astronaut, pos, counter, orientation)
     counter += 1
 
     for event in pygame.event.get():
@@ -88,25 +70,26 @@ while not game_over:
                 move_left = False
             if event.key == pygame.K_d:
                 move_right = False
-
-    #if astronaut.colliderect(inviswall):
-        #move_up = False
-        #move_down = False
-        #move_left = False
-        #move_right = False
-    #else:
-        if move_up:
-            pos[1] -= 10
-        if move_down:
-            pos[1] += 10
-        if move_left:
-            pos[0] -= 10
-            orientation = "astroleft"
-        if move_right:
-            pos[0] += 10
-            orientation = "astroright"
-
-    clock.tick(30)
+    if move_up:
+        velocity[1] -= acceleration
+    if move_down:
+        velocity[1] += acceleration
+    if move_left:
+        velocity[0] -= acceleration
+        orientation = "astroleft"
+    if move_right:
+        velocity[0] += acceleration
+        orientation = "astroright"
+    velocity[0] *= (1 - friction)
+    velocity[1] *= (1 - friction)
+    velocity[0] = min(max_speed, max(-max_speed, velocity[0]))
+    velocity[1] = min(max_speed, max(-max_speed, velocity[1]))
+    pos[0] += velocity[0]
+    pos[1] += velocity[1]
+    astronaut = createImage(orientation + ".png", [300, 300])
+    astronaut_rect = astronaut.get_rect(center=(pos[0], pos[1]))
+    dis.blit(astronaut, astronaut_rect)
+    clock.tick(60)
     pygame.display.update()
 
 pygame.quit()
