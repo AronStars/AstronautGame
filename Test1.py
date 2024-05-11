@@ -30,11 +30,13 @@ def displayMessage(msg, loc, colour=(0, 0, 0)):
 
 pos = [500, 350]
 velocity = [0, 0]
-gravity = 0.5
-jump_power = 10  # Increased jump power
-acceleration = 0.8
+gravity = 20
+jump_power = 100
+acceleration = 20
 friction = 0.2  
-max_speed = 50
+max_speed = 100
+jump_acceleration = 20
+jump_deceleration = 10
 
 clock = pygame.time.Clock()
 
@@ -42,9 +44,15 @@ game_over = False
 target = False
 
 move_up = False
-move_down = False
-move_left = False
-move_right = False
+player_state = {
+    "move_up": False,
+    "move_down": False,
+    "move_left": False,
+    "move_right": False
+}
+
+astronaut = createImage(orientation + ".png", [300, 300])
+astronaut_rect = astronaut.get_rect(center=(pos[0], pos[1]))
 
 while not game_over:
     dis.fill(black)
@@ -56,52 +64,65 @@ while not game_over:
             game_over = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
-                if not move_down and not move_up: 
-                    move_up = True
+                if not player_state["move_down"] and not player_state["move_up"]: 
+                    player_state["move_up"] = True
                     starttime = time.time()
             if event.key == pygame.K_a:
-                move_left = True
+                player_state["move_left"] = True
             if event.key == pygame.K_d:
-                move_right = True
+                player_state["move_right"] = True
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
-                move_up = False
-                move_down = True  
+                player_state["move_up"] = False
+                player_state["move_down"] = True  
             if event.key == pygame.K_s:
-                move_down = False
+                player_state["move_down"] = False
             if event.key == pygame.K_a:
-                move_left = False
+                player_state["move_left"] = False
             if event.key == pygame.K_d:
-                move_right = False
-    if move_up:
+                player_state["move_right"] = False
+    
+    if player_state["move_up"]:
         elapsedtime = time.time() - starttime
-        if elapsedtime > 0.5:  # Delay before resetting the move_up flag
-            move_up = False
+        if elapsedtime > 0.5: 
+            player_state["move_up"] = False
         else:
             velocity[1] -= jump_power
-    if move_down:
+            velocity[1] -= jump_acceleration
+    else:
+        player_state["move_down"] = True
+    
+    if player_state["move_down"]:
         velocity[1] += acceleration
-    velocity[1] += gravity # Add gravity to the velocity
-    if move_left:
+    
+    velocity[1] += gravity
+    
+    if player_state["move_left"]:
         velocity[0] -= acceleration
         orientation = "astroleft"
-    if move_right:
+    
+    if player_state["move_right"]:
         velocity[0] += acceleration
-        orientation = "astroright" # Change the orientation of the astronaut
+        orientation = "astroright"  
+    
     velocity[0] *= (1 - friction)
     velocity[1] *= (1 - friction)
     velocity[0] = min(max_speed, max(-max_speed, velocity[0]))
     velocity[1] = min(max_speed, max(-max_speed, velocity[1]))
-    pos[0] += velocity[0]
-    pos[1] += velocity[1] # Calculate the new position of the astronaut
-    astronaut = createImage(orientation + ".png", [300, 300])
-    astronaut_rect = astronaut.get_rect(center=(pos[0], pos[1]))
-    if pos[1] >= 700:
+    
+    dt = clock.tick(60) / 1000.0 
+    
+    pos[0] += velocity[0] * dt
+    pos[1] += velocity[1] * dt  
+    
+    if pos[1] >= 600:
         velocity[1] = 0
-        pos[1] = 700
-        move_down = False 
+        pos[1] = 600
+        player_state["move_down"] = False 
+    
+    astronaut_rect.center = (pos[0], pos[1])
+    
     dis.blit(astronaut, astronaut_rect)
-    clock.tick(60)
     pygame.display.update()
 
 pygame.quit()
