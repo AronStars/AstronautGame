@@ -43,7 +43,6 @@ clock = pygame.time.Clock()
 game_over = False
 target = False
 
-move_up = False
 player_state = {
     "move_up": False,
     "move_down": False,
