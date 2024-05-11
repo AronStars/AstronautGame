@@ -1,6 +1,7 @@
 import pygame, time
 
 # FINAL BOSS MUST BE WARING
+#test
 
 pygame.init()
 dis = pygame.display.set_mode((1000, 700))
@@ -18,6 +19,7 @@ green = (0, 255, 0)
 yellow = (255, 255, 0)
 orientation = "astroright"
 global counter
+
 counter = 0
 
 def createImage(image, size):
@@ -41,7 +43,7 @@ jump_deceleration = 10
 clock = pygame.time.Clock()
 
 game_over = False
-target = False
+target = true
 
 player_state = {
     "move_up": False,
