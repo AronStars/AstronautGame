@@ -41,6 +41,7 @@ grid = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 #converting tilemap into an array of rect objects
 blocksize = Psize * 2
 blocks = []
+#ginge
 for y, row in enumerate(grid):
     for x, space in enumerate(row):
         if row[x] == 1:
