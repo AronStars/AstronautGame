@@ -65,13 +65,6 @@ while run:
             bulletshootingyes = True
             bpx, bpy = Px, Py  # Reset bullet position to player's position
 
-    if bulletshootingyes:
-        bulletshoot((bpx, bpy))
-        bpx += bulletspeed
-        bullets.append(pygame.Rect(bpx, bpy, 10, 10))
-        bulletshootingtime += 1
-        if bpx > 600:
-            bulletshootingyes = False
 
     if keys[pygame.K_LEFT]:
         move = True
@@ -137,7 +130,7 @@ while run:
     pygame.draw.rect(scrn, "yellow", player)
 
     for bullet in bullets:
-        pygame.draw.rect(scrn, "red", bullet)
+        pygame.draw.rect(scrn, "red", bullet.move(300 - Px, 200 - Py))
 
     for block in blocks:
         pygame.draw.rect(scrn, "blue", block)
