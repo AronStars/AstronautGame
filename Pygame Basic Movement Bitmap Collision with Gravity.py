@@ -124,10 +124,12 @@ while run:
         
     #updating the player each frame
     player = pygame.Rect(Px, Py, Psize, Psize)
+    enemy = pygame.Rect(300, 300, Psize, Psize)
     
     #displaying the game
     scrn.fill("black")
     pygame.draw.rect(scrn, "yellow", player)
+    pygame.draw.rect(scrn, "green", enemy)
 
     for bullet in bullets:
         pygame.draw.rect(scrn, "red", bullet.move(300 - Px, 200 - Py))
